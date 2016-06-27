@@ -19,11 +19,7 @@ class UsersController extends FOSRestController
 
 		return new JsonResponse([
 			'users' => array_map(function(User $user) {
-				return [
-					'id' => $user->getId(),
-					'name' => $user->getName(),
-					'email' => $user->getEmail(),
-				];
+				return $this->get('api.user.user_response_factory')->getUser($user);
 			}, $users),
 		]);
 	}
@@ -36,11 +32,7 @@ class UsersController extends FOSRestController
 		$user = $this->get('user_repository')->getUserById($userId);
 
 		return new JsonResponse([
-			'user' => [
-				'id' => $user->getId(),
-				'name' => $user->getName(),
-				'email' => $user->getEmail(),
-			],
+			'user' => $this->get('api.user.user_response_factory')->getUser($user),
 		]);
 	}
 

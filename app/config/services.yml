@@ -4,6 +4,9 @@ parameters:
 #    parameter_name: value
 
 services:
+    api.user.user_response_factory:
+        class: AppBundle\Api\User\UserResponseFactory
+
     user_repository:
         class: AppBundle\User\UserRepository
         arguments:

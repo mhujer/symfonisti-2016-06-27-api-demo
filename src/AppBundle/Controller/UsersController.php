@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Api\RequestValidationErrorException;
 use AppBundle\Api\User\UserRequest;
 use AppBundle\User\User;
 use FOS\RestBundle\Controller\Annotations\Delete;
@@ -9,6 +10,7 @@ use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class UsersController extends FOSRestController
 {
@@ -42,8 +44,12 @@ class UsersController extends FOSRestController
 	/**
 	 * @Post("/users")
 	 */
-	public function addUserAction(UserRequest $userRequest)
+	public function addUserAction(UserRequest $userRequest, ConstraintViolationListInterface $validationErrors)
 	{
+		if (count($validationErrors) > 0) {
+			throw new RequestValidationErrorException($validationErrors);
+		}
+
 		$user = new User(
 			$userRequest->name,
 			$userRequest->email

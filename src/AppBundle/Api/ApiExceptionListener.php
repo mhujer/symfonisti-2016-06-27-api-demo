@@ -10,7 +10,25 @@ class ApiExceptionListener
 	{
 		$exception = $event->getException();
 
-		if ($exception instanceof \Exception) {
+		if ($exception instanceof \AppBundle\Api\RequestValidationErrorException) {
+			$violations = [];
+
+			foreach ($exception->getViolationList() as $violation) {
+				/** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation  */
+				$violations[$violation->getPropertyPath()] = $violation->getMessage();
+			}
+
+			$event->setResponse(
+				new JsonResponse(
+					[
+						'message' => 'Validation failed!',
+						'errors' => $violations,
+					],
+					400
+				)
+			);
+			return;
+		} else {
 			$event->setResponse(
 				new JsonResponse(
 					[

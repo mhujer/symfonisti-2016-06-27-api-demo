@@ -29,4 +29,22 @@ class UserRepository
 			->getResult();
 	}
 
+	/**
+	 * @return \AppBundle\User\User
+	 */
+	public function getUserById(int $userId)
+	{
+		try {
+			return $this->entityManager
+				->createQueryBuilder()
+				->select('user')
+				->from(User::class, 'user')
+				->andWhere('user.id = :userId')->setParameter('userId', $userId)
+				->getQuery()
+				->getSingleResult();
+		} catch (\Doctrine\ORM\NoResultException $e) {
+			throw new \AppBundle\User\Exceptions\UserNotFoundException($userId, $e);
+		}
+	}
+
 }

@@ -28,4 +28,20 @@ class UsersController extends FOSRestController
 		]);
 	}
 
+	/**
+	 * @Get("/users/{userId}")
+	 */
+	public function userDetailAction(int $userId)
+	{
+		$user = $this->get('user_repository')->getUserById($userId);
+
+		return new JsonResponse([
+			'user' => [
+				'id' => $user->getId(),
+				'name' => $user->getName(),
+				'email' => $user->getEmail(),
+			],
+		]);
+	}
+
 }

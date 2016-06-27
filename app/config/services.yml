@@ -4,6 +4,13 @@ parameters:
 #    parameter_name: value
 
 services:
+    api.api_exception_listener:
+        class: AppBundle\Api\ApiExceptionListener
+        tags:
+            -
+                name: kernel.event_listener
+                event: kernel.exception
+
     api.user.user_response_factory:
         class: AppBundle\Api\User\UserResponseFactory
 

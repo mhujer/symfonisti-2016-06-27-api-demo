@@ -65,6 +65,13 @@ doctrine:
                 dir: "%kernel.root_dir%/../src/"
                 prefix: AppBundle\
 
+fos_rest:
+    body_converter:
+        enabled: true
+
+sensio_framework_extra:
+    request: { converters: true }
+
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"

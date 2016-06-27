@@ -34,11 +34,16 @@ class UsersController extends FOSRestController
 	 */
 	public function userDetailAction(int $userId)
 	{
-		$user = $this->get('user_repository')->getUserById($userId);
+		try {
+			$user = $this->get('user_repository')->getUserById($userId);
+	
+			return new JsonResponse([
+				'user' => $this->get('api.user.user_response_factory')->getUser($user),
+			]);
 
-		return new JsonResponse([
-			'user' => $this->get('api.user.user_response_factory')->getUser($user),
-		]);
+		} catch (\AppBundle\User\Exceptions\UserNotFoundException $e) {
+			self::handleUserNotFoundException($e);
+		}
 	}
 
 	/**
@@ -66,12 +71,25 @@ class UsersController extends FOSRestController
 	 */
 	public function deleteUserAction(int $userId)
 	{
-		$user = $this->get('user_repository')->getUserById($userId);
+		try {
+			$user = $this->get('user_repository')->getUserById($userId);
 
-		$this->get('doctrine.orm.entity_manager')->remove($user);
-		$this->get('doctrine.orm.entity_manager')->flush();
+			$this->get('doctrine.orm.entity_manager')->remove($user);
+			$this->get('doctrine.orm.entity_manager')->flush();
 
-		return new JsonResponse(null, 204);
+			return new JsonResponse(null, 204);
+
+		} catch (\AppBundle\User\Exceptions\UserNotFoundException $e) {
+			self::handleUserNotFoundException($e);
+		}
+	}
+
+	private static function handleUserNotFoundException(\AppBundle\User\Exceptions\UserNotFoundException $e)
+	{
+		throw new \AppBundle\Api\Exceptions\NotFoundException(
+			$e->getMessage(),
+			$e
+		);
 	}
 
 }

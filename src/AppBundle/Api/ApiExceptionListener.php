@@ -10,7 +10,16 @@ class ApiExceptionListener
 	{
 		$exception = $event->getException();
 
-		if ($exception instanceof \AppBundle\Api\RequestValidationErrorException) {
+		if ($exception instanceof \AppBundle\Api\Exceptions\NotFoundException) {
+			$event->setResponse(
+				new JsonResponse(
+					[
+						'message' => $exception->getMessage(),
+					],
+					404
+				)
+			);
+		} elseif ($exception instanceof \AppBundle\Api\RequestValidationErrorException) {
 			$violations = [];
 
 			foreach ($exception->getViolationList() as $violation) {
